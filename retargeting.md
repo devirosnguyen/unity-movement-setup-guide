@@ -56,20 +56,69 @@ flowchart LR
 
 Click chuột phải vào model trong cửa sổ **Project**, chọn **Movement SDK → Body Tracking → Run Default Retargeting Setup**.
 
+![Menu chuột phải trên model: Movement SDK → Body Tracking](assets/images/rt-01-context-menu.png)
+
 Lệnh này làm giống hệt mở Configuration Editor rồi bấm *Next → Next → Next → Validate and save config* mà không sửa gì, chỉ khác là không mở cửa sổ nào. Kết quả gồm **config JSON** và **metadata asset**. Chạy lại lệnh thì config được dựng lại từ model hiện tại, vẫn giữ known joints, các joint loại khỏi auto-mapping và các joint đã xóa.
 
 ### Cách B: Retargeting Configuration Editor (tinh chỉnh)
 
 Click chuột phải vào model, chọn **Movement SDK → Body Tracking → Open Retargeting Configuration Editor**. Nếu chưa có config JSON, tool hỏi tạo mới: chọn **Create** và chọn nơi lưu.
 
-Editor có 4 bước (`EditorStep`):
+Editor mở tab **Retargeting Editor** ở panel bên trái, và Scene view chuyển sang một scene preview riêng (breadcrumb ghi **Realistic Config**) chứa một `PreviewCharacter`. Góc dưới bên phải Scene view có 2 overlay:
 
-| Bước | Việc cần làm |
-|---|---|
-| **1. Configuration** | Kiểm tra **Configuration Joints**: bỏ các bone không cần retarget, ví dụ bone có animation riêng hoặc dùng cho IK. Kiểm tra **Known Joints**, tức ánh xạ tự động kiểu `Right_UpperLeg → Right Upper Leg`. Đưa nhân vật về T-pose bằng **Pose character to T-Pose** hoặc chỉnh tay, rồi bấm **Next**. |
-| **2. Min T-Pose** | Căn nhân vật theo skeleton source **nhỏ nhất** (người thấp). Dùng **Align with Skeleton** để căn tự động, **Reset T-Pose** để trả về tư thế nghỉ, **Preview Sequences** để xem thử. Chỉnh bằng transform tool của Unity thì preview cập nhật ngay. |
-| **3. Max T-Pose** | Như bước 2 nhưng với skeleton source **lớn nhất** (người cao). |
-| **4. Review & Export** | Kéo thanh **Size** để xem nhân vật co giãn giữa min và max, rồi bấm **Validate and save config**. |
+- **MSDKUtilityEditorOverlay → Visualization**: bật/tắt **Draw Source Skeleton**, **Draw Target Skeleton**, **Draw Preview Skeleton**, và nút **Preview Scale**.
+- **Retargeting Tool → Joint Mapping**: **Auto Mapping** gồm **Map Twists** và **Auto Update Mappings**.
+
+Panel bên trái có thanh tiêu đề **Retargeting Setup** với số bước `1 / 4` … `4 / 4`, kèm hai trường **Scene View Character** và **Config Asset**. Cạnh Config Asset có 3 nút: lưu, tải lại, tạo mới.
+
+#### Bước 1/4: Setup Configuration
+
+![Bước 1 - Setup Configuration](assets/images/rt-02-setup-configuration.png)
+
+- **Known Joints**: tool tự dò các joint chuẩn (Root, Hips, Right/LeftUpperArm, Right/LeftWrist, Chest, Neck, Right/LeftUpperLeg, Right/LeftAnkle). Kiểm tra lại, nếu sai thì kéo đúng Transform vào.
+- **Config Bone Transforms** (bấm để mở rộng): danh sách bone được retarget. Bỏ những bone không cần retarget, ví dụ bone có animation riêng hoặc dùng cho IK.
+
+  ![Config Bone Transforms](assets/images/rt-03-config-bone-transforms.png)
+
+- **Load original T-Pose**: nạp lại T-pose đã lưu trong config. **Load original hands**: chỉ nạp lại pose bàn tay. **Pose character to T-Pose**: tự đưa nhân vật về T-pose, dùng khi model đang ở A-pose.
+- Bấm **Next**. Hộp thoại **Save Configuration Changes** hiện lên:
+
+  ![Save Configuration Changes](assets/images/rt-04-save-dialog.png)
+
+  - **Yes**: lưu rồi sang bước tiếp.
+  - **No**: không lưu nhưng vẫn sang bước tiếp. Nên chọn No khi chỉ xem thử config của sample.
+  - **Cancel**: ở lại bước hiện tại.
+
+#### Bước 2/4: Align Min T-Pose
+
+Căn nhân vật theo skeleton source **nhỏ nhất** (người thấp). Skeleton màu xanh lá là skeleton source.
+
+![Bước 2 - Align Min T-Pose sau khi Align with Skeleton](assets/images/rt-05-min-tpose-align.png)
+
+- **Primary Alignment Actions**:
+  - **Align with Skeleton**: tự căn skeleton nhân vật theo skeleton source. Nên bấm nút này trước.
+  - **Scale from max T-Pose**: co giãn nhân vật lấy T-pose bên kia làm chuẩn.
+  - **Reset T-Pose**: trả nhân vật về T-pose mặc định.
+- **Fine-Tuning**: **Load Wrists & Fingers**, **Align Wrists**, **Align Fingers** để chỉnh riêng cổ tay và ngón tay sau khi đã căn chung.
+- **Preview Sequences**: chọn một chuỗi chuyển động (Boxing, Hands, Jumping, Rallying, Sitting, Squatting, Stepping, Swinging, Walking). Một nhân vật preview sẽ chạy bên cạnh. Mục **Playback** có thanh thời gian và nút tạm dừng/dừng. Chỉnh T-pose bằng transform tool của Unity thì preview cập nhật ngay.
+
+![Bước 2 - Preview Sequences đang chạy](assets/images/rt-06-min-tpose-preview.png)
+
+#### Bước 3/4: Align Max T-Pose
+
+Như bước 2 nhưng căn theo skeleton source **lớn nhất** (người cao). Nút scale ở bước này là **Scale from min T-Pose**.
+
+![Bước 3 - Align Max T-Pose với preview Squatting](assets/images/rt-07-max-tpose.png)
+
+#### Bước 4/4: Review & Export
+
+![Bước 4 - Review & Export](assets/images/rt-08-review-export.png)
+
+- **Size Adjustment**: kéo thanh **Size** để xem nhân vật co giãn giữa Min và Max T-Pose, kết hợp với Preview Sequences.
+- **Validate and save config**: kiểm tra rồi ghi config JSON. Bấm **Done** để thoát editor.
+
+{: .warning }
+> Khi chỉ xem thử config của sample (`Realistic`, `StylizedCharacter`…), **đừng bấm Validate and save config** và luôn chọn **No** ở hộp thoại lưu. Nếu không, config gốc của sample sẽ bị ghi đè.
 
 {: .tip }
 > Mesh có bounds nhỏ có thể bị Unity cull (không skin) khi người dùng vươn tay ra xa. Hãy tăng bounds bằng **Edit Bounds** trong Skinned Mesh Renderer, hoặc bật **Update When Offscreen**. Cách thứ hai tốn thêm CPU.
@@ -81,8 +130,29 @@ Editor có 4 bước (`EditorStep`):
 
 Lệnh này:
 - Tạo hoặc lấy lại metadata của model.
-- Thêm `CharacterRetargeter` và gán **Config Asset** = config JSON.
-- Thêm `MetaSourceDataProvider` với **Provided Skeleton Type = Full Body**.
+- Thêm `CharacterRetargeter` và gán **Config** = config JSON.
+- Thêm `MetaSourceDataProvider` với **Body Joint Set = Full Body**. Trong code field này là `ProvidedSkeletonType`.
+
+**Character Retargeter** trong Inspector (nhân vật `StylizedCharacter` của scene `MovementBody`):
+
+![Character Retargeter - Inspector](assets/images/rt-09-character-retargeter.png)
+
+| Nhóm | Field |
+|---|---|
+| Configuration | **Config** (file JSON), nút **Map** và **Open Editor** (mở Retargeting Configuration Editor), **Joint Pairs**, **Shape Pose Data**, **Max Faceshape Value** |
+| Debugging | **Debug Draw Source Skeleton**, **Debug Draw Target Skeleton** |
+| Retargeting | **Retargeting Behavior**, **Hide Lower Body when using Upper Body**, **Leg Scale when using Hide Lower Body**, **Apply Root Scale**, **Apply Head Scale**, **Head Scale Multiplier**, **Scale Range**, **Current Scale** |
+
+**Processors** và **Meta Source Data Provider**:
+
+![Target Processor (Animation) và Meta Source Data Provider](assets/images/rt-10-processors-data-provider.png)
+
+- `StylizedCharacter` không có source processor nào. Nó có 1 target processor loại **Animation**, với **Anim Blend Indices** = `Right_UpperArm`, `Right_LowerArm`, `Right_Hand`. Đây là animation vẫy tay phải, điều khiển bằng `WaveAnimController` trên component **Animator**.
+- **Meta Source Data Provider** gồm: **Body Joint Set**, **Valid Body Tracking Delay** (0.25 s), **Debug Draw Skeleton**, **Enable AI Motion Synthesizer**.
+
+Khi chọn một nhân vật có `CharacterRetargeter` trong scene thường, overlay **Retargeting Tool** cũng hiện ra. Chế độ **Joint Mapping** vẽ các khối xanh dương thể hiện ánh xạ joint:
+
+![Retargeting Tool overlay](assets/images/rt-11-retargeting-tool-overlay.png)
 
 {: .note }
 > Docs cũ ghi là thêm `OVRBody`. Từ bản 209, nếu nhân vật còn component `OVRBody`, inspector của `CharacterRetargeter` sẽ hiện cảnh báo kèm nút **Fix** để thay bằng `MetaSourceDataProvider`. Thao tác này undo được.
@@ -160,7 +230,7 @@ Processors chạy **theo thứ tự trong danh sách**. Thêm processor ở **So
 1. Tích hợp ISDK Locomotion vào scene.
 2. Trên `CharacterRetargeter`, thêm target processor **Locomotion** và **Animation**.
 3. Bấm **Setup** trên Locomotion processor.
-4. Bấm **Update anim blend indices with lower body** trên Animation processor.
+4. Bấm **Update blend indices to lower body** trên Animation processor. Docs Meta gọi nút này là *Update anim blend indices with lower body*.
 5. Gán một Animator Controller có blend tree locomotion. Trong sample đó là `LocomotionController`, với tham số `Horizontal`/`Vertical`.
 
 Kết quả: khi đẩy thumbstick, animation chạy sẽ thay phần thân dưới. Khi đứng yên thì body tracking điều khiển toàn thân. Xem [Demo §3](demo#step-3).
@@ -181,21 +251,26 @@ Các field khác của `SkeletonRetargeter` trong Inspector (giá trị mặc đ
 | Field | Ý nghĩa |
 |---|---|
 | **Apply Root Scale** (bật) | Co giãn cả nhân vật theo chiều cao người dùng, trong giới hạn **Scale Range** (0,8–1,2). |
-| **Apply Head Scale** (bật) | Co giãn đầu theo **Head Scale Factor** (0,95). Từ bản 209, field này vẫn hiện kể cả khi Apply Root Scale đang tắt. |
-| **Hide Lower Body When Upper Body Tracking** (tắt) | Ẩn chân (scale về **Hide Leg Scale**) khi chỉ có dữ liệu thân trên. |
+| **Apply Head Scale** (bật) | Co giãn đầu theo **Head Scale Multiplier** (0,95). Từ bản 209, field này vẫn hiện kể cả khi Apply Root Scale đang tắt. |
+| **Hide Lower Body when using Upper Body** | Ẩn chân, scale về **Leg Scale when using Hide Lower Body**, khi chỉ có dữ liệu thân trên. Mặc định trong code là tắt. `StylizedCharacter` của sample bật sẵn với Leg Scale = (1; 0,5; 1). |
 
 **Root motion** không chỉnh trong Inspector. Nó là tham số `RetargetingRootMotionBehavior` của API native (`MSDKUtility`), gồm: `CombineHipRotationIntoRoot` (mặc định khi khởi tạo tham số), `RootFlatTranslationFullHipRotation` (hành vi mặc định của MSDK OpenXR theo chú thích trong code) và `ZeroOutAllRootTranslationAndHipYaw` (khóa nhân vật ở gốc, luôn quay mặt về phía trước).
 
 ### Debug
 
-`CharacterRetargeter` có các tùy chọn vẽ debug:
+Inspector của `CharacterRetargeter` hiện 2 tùy chọn trong nhóm **Debugging**: **Debug Draw Source Skeleton** và **Debug Draw Target Skeleton**. `MetaSourceDataProvider` có thêm **Debug Draw Skeleton** để vẽ skeleton body tracking nguồn.
 
-| Tùy chọn | Màu mặc định |
+| Skeleton | Màu mặc định |
 |---|---|
-| Debug Draw Source Skeleton | Xanh nhạt |
-| Debug Draw Target Skeleton | Cam nhạt |
-| Debug Draw Source / Target T-Pose | Xanh / cam |
-| Invalid Source / Target | Tím / đỏ: pose không hợp lệ, ví dụ mất tracking |
+| Source | Xanh nhạt |
+| Target | Cam nhạt |
+| Source / Target không hợp lệ | Tím / đỏ: pose không hợp lệ, ví dụ mất tracking |
+
+Code còn có tùy chọn vẽ T-pose (source xanh, target cam). Tùy chọn này là field serialized nhưng không hiện trong nhóm Debugging ở Inspector mặc định.
+
+Ảnh dưới chụp lúc Play với Meta XR Simulator khi đã bật debug draw. Skeleton trắng trong khung nhìn Simulator là skeleton body tracking vẽ chồng lên nhân vật:
+
+![Play với Meta XR Simulator khi bật debug skeleton](assets/images/rt-12-debug-skeleton-simulator.png)
 
 Thấy skeleton **tím hoặc đỏ** khi chạy bằng Simulator nghĩa là provider chưa nhận được pose hợp lệ. Xem [Issue #6](issues#issue-6).
 
@@ -206,7 +281,7 @@ Thấy skeleton **tím hoặc đỏ** khi chạy bằng Simulator nghĩa là pro
 
 - [ ] Rig humanoid, scale joint đồng nhất, chiều cao 1,0–2,5 m
 - [ ] Đã tạo config: **Run Default Retargeting Setup** hoặc **Configuration Editor**
-- [ ] Nhân vật trong scene đã có `CharacterRetargeter` (có Config Asset) và `MetaSourceDataProvider` (Full Body)
+- [ ] Nhân vật trong scene đã có `CharacterRetargeter` (đã gán Config) và `MetaSourceDataProvider` (Body Joint Set = Full Body)
 - [ ] OVRManager: Body Tracking Support bật, Joint Set = **Full Body**, Fidelity = **High**, đã tick permission Body Tracking
 - [ ] Cổ tay bị xoắn thì thêm 2 `TwistSkeletalProcessor`
 - [ ] Cần animation hoặc locomotion thì thêm `AnimationSkeletalProcessor` và `LocomotionSkeletalProcessor`
