@@ -1,0 +1,15 @@
+title: Unity Movement Setup Guide
+description: Hướng dẫn setup Meta XR Movement SDK trên Unity 6, test bằng Meta XR Simulator, tổng hợp lỗi và cách sửa.
+remote_theme: just-the-docs/just-the-docs@v0.10.0
+plugins:
+  - jekyll-remote-theme
+color_scheme: dark
+search_enabled: true
+heading_anchors: true
+exclude:
+  - raw-shots/
+  - README.md
+aux_links:
+  "Meta Unity-Movement (GitHub)": "https://github.com/oculus-samples/Unity-Movement"
+  "Movement SDK docs": "https://developers.meta.com/horizon/documentation/unity/move-overview"
+footer_content: "Tài liệu cộng đồng, không phải tài liệu chính thức của Meta. Meta XR Movement SDK thuộc Oculus SDK License."
