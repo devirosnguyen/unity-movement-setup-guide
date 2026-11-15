@@ -13,3 +13,5 @@ aux_links:
   "Meta Unity-Movement (GitHub)": "https://github.com/oculus-samples/Unity-Movement"
   "Movement SDK docs": "https://developers.meta.com/horizon/documentation/unity/move-overview"
 footer_content: "Tài liệu cộng đồng, không phải tài liệu chính thức của Meta. Meta XR Movement SDK thuộc Oculus SDK License."
+mermaid:
+  version: "10.9.1"

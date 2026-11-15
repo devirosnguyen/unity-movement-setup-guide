@@ -35,6 +35,7 @@ Movement SDK 209.0.0 yêu cầu tối thiểu **Unity 6000.0.66f2**. Xem `packag
 1. [Setup project](setup): tạo project, cài package, cấu hình XR, layer, OVRManager, import sample.
 2. [Meta XR Simulator](simulator): bật Simulator và cấu hình input.
 3. [Demo Full Body Tracking](demo): chạy demo với controller, hand tracking và locomotion.
-4. [Lỗi & cách sửa](issues): các lỗi gặp thực tế, nguyên nhân và cách sửa.
+4. [Pipeline Retargeting](retargeting): tạo config retargeting cho nhân vật và luồng xử lý mỗi frame (processors, tùy chọn, debug).
+5. [Lỗi & cách sửa](issues): các lỗi gặp thực tế, nguyên nhân và cách sửa.
 
 ![Project sau khi import đủ sample](assets/images/samples-imported.png)

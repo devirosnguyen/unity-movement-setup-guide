@@ -1,6 +1,6 @@
 ---
 title: Lỗi & cách sửa
-nav_order: 5
+nav_order: 6
 ---
 
 # Lỗi đã gặp và cách sửa
